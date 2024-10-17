@@ -5,7 +5,7 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JOIN {
-  /** Collection name in case of one to many, many to many or one-to-one relationship */
+  /** Collection name in case of one to many, many to many */
   String collection() default "";
 
   /** Entity class we want to join */
