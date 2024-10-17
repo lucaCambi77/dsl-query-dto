@@ -1,6 +1,7 @@
 import static org.example.query.QueryFieldConverter.convert;
 import static org.example.query.QueryFilterService.predicateFrom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.querydsl.core.BooleanBuilder;
@@ -15,6 +16,7 @@ import org.example.employee.*;
 import org.example.employee.Employee;
 import org.example.employee.QEmployee;
 import org.example.query.FilterRequest;
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -85,7 +87,8 @@ class FilterTest {
     filterRequest.setName("John Doe");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
+    BooleanBuilder where =
+        predicateFrom(convert(filterRequest), QEmployee.employee, query, List.of());
 
     List<Employee> employees = query.where(where).fetch();
 
@@ -100,7 +103,8 @@ class FilterTest {
     filterRequest.setProjectName("Project Alpha");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
+    BooleanBuilder where =
+        predicateFrom(convert(filterRequest), QEmployee.employee, query, List.of());
 
     List<Employee> employees = query.where(where).fetch();
 
@@ -115,7 +119,8 @@ class FilterTest {
     filterRequest.setClientName("Acme Corp");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
+    BooleanBuilder where =
+        predicateFrom(convert(filterRequest), QEmployee.employee, query, List.of());
 
     List<Employee> employees = query.where(where).fetch();
 
@@ -131,7 +136,8 @@ class FilterTest {
     filterRequest.setClientName("Acme Corp");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
+    BooleanBuilder where =
+        predicateFrom(convert(filterRequest), QEmployee.employee, query, List.of());
 
     List<Employee> employees = query.where(where).fetch();
 
@@ -146,7 +152,8 @@ class FilterTest {
     filterRequest.setClientName("Beta Inc");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
+    BooleanBuilder where =
+        predicateFrom(convert(filterRequest), QEmployee.employee, query, List.of());
 
     List<Employee> employees = query.where(where).fetch();
 
@@ -161,12 +168,24 @@ class FilterTest {
     filterRequest.setDepartmentName("Marketing");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
+    BooleanBuilder where =
+        predicateFrom(convert(filterRequest), QEmployee.employee, query, List.of());
 
     List<Employee> employees = query.where(where).fetch();
 
     // Assert that both employees linked to Acme Corp are returned
     assertEquals(1, employees.size());
     assertTrue(employees.stream().anyMatch(emp -> emp.getName().equals("Jane Smith")));
+  }
+
+  @Test
+  void testExpandNotApplied() {
+    JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
+    BooleanBuilder where =
+        predicateFrom(convert(new FilterRequest()), QEmployee.employee, query, List.of());
+
+    List<Employee> employees = query.where(where).fetch();
+
+    assertFalse(Hibernate.isInitialized(employees.get(0).getProjects()));
   }
 }

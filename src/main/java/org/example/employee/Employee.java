@@ -1,6 +1,7 @@
 package org.example.employee;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -9,6 +10,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,16 +23,16 @@ public class Employee {
 
   private String name;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "department_id", nullable = false)
   private Department department;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "employee_project",
       joinColumns = @JoinColumn(name = "employee_id"),
       inverseJoinColumns = @JoinColumn(name = "project_id"))
-  private Set<ProjectToDo> projects;
+  private Set<ProjectToDo> projects = new HashSet<>(0);
 
   // Getters and Setters
   public Long getId() {

@@ -14,10 +14,10 @@ public class ProjectToDo {
 
   private String name;
 
-  @ManyToMany(mappedBy = "projects")
+  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "projects")
   private Set<Employee> employees = new HashSet<>();
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "client_id", nullable = false)
   private Client client;
 
