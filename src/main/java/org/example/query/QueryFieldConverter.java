@@ -11,8 +11,8 @@ import org.example.query.annnotation.QueryField;
 
 public class QueryFieldConverter {
 
-  public static List<QueryParams> convert(FilterRequest filterRequest) {
-    List<QueryParams> queryParams = new ArrayList<>();
+  public static List<QueryFilter> convert(FilterRequest filterRequest) {
+    List<QueryFilter> queryFilters = new ArrayList<>();
 
     for (Field field : filterRequest.getClass().getDeclaredFields()) {
       field.setAccessible(true);
@@ -25,8 +25,8 @@ public class QueryFieldConverter {
             String fieldName = queryFieldAnnotation.fieldName();
             JOIN[] joinPath = queryFieldAnnotation.joinPath();
 
-            queryParams.add(
-                new QueryParams(
+            queryFilters.add(
+                new QueryFilter(
                     fieldName,
                     Arrays.stream(joinPath)
                         .map(
@@ -43,6 +43,6 @@ public class QueryFieldConverter {
         }
       }
     }
-    return queryParams;
+    return queryFilters;
   }
 }

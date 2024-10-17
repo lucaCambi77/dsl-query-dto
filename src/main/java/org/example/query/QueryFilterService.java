@@ -15,30 +15,30 @@ import org.example.employee.QEmployee;
 public class QueryFilterService {
 
   public static <T> BooleanBuilder predicateFrom(
-      List<QueryParams> queryParams, EntityPathBase<T> rootEntity, JPAQuery<?> query) {
+      List<QueryFilter> queryFilters, EntityPathBase<T> rootEntity, JPAQuery<?> query) {
 
-    return predicate(queryParams, rootEntity, query);
+    return predicate(queryFilters, rootEntity, query);
   }
 
   public static <T> BooleanBuilder predicateFromRoot(
-      List<QueryParams> queryParams, EntityPathBase<T> rootEntity, JPAQueryFactory factory) {
+      List<QueryFilter> queryFilters, EntityPathBase<T> rootEntity, JPAQueryFactory factory) {
 
     JPAQuery<Employee> query = factory.selectFrom(QEmployee.employee);
 
-    return predicate(queryParams, rootEntity, query);
+    return predicate(queryFilters, rootEntity, query);
   }
 
   private static <T> BooleanBuilder predicate(
-      List<QueryParams> queryParams, EntityPathBase<T> rootEntity, JPAQuery<?> query) {
+      List<QueryFilter> queryFilters, EntityPathBase<T> rootEntity, JPAQuery<?> query) {
 
     BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-    for (QueryParams queryParam : queryParams) {
+    for (QueryFilter queryFilter : queryFilters) {
       booleanBuilder.and(
-          (buildPredicatesForObject(
-              pathBuilder(query, rootEntity, queryParam.joins()),
-              queryParam.fieldName(),
-              queryParam.value())));
+          buildPredicatesForObject(
+              pathBuilder(query, rootEntity, queryFilter.joins()),
+              queryFilter.fieldName(),
+              queryFilter.value()));
     }
     return booleanBuilder;
   }
