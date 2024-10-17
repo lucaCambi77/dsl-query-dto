@@ -1,10 +1,12 @@
 package org.example.query;
 
+import static org.example.employee.Employee.PROJECTS;
+
 import org.example.employee.Client;
 import org.example.employee.Department;
 import org.example.employee.ProjectToDo;
-import org.example.query.annnotation.QueryField;
 import org.example.query.annnotation.JOIN;
+import org.example.query.annnotation.QueryField;
 
 public class FilterRequest {
 
@@ -14,14 +16,14 @@ public class FilterRequest {
   @QueryField(
       fieldName = "name",
       joinPath = {
-        @JOIN(collection = "projects", entityClass = ProjectToDo.class),
+        @JOIN(collection = PROJECTS, entityClass = ProjectToDo.class),
         @JOIN(entityClass = Client.class)
       })
   private String clientName;
 
   @QueryField(
       fieldName = "name",
-      joinPath = {@JOIN(collection = "projects", entityClass = ProjectToDo.class)})
+      joinPath = {@JOIN(collection = PROJECTS, entityClass = ProjectToDo.class)})
   private String projectName;
 
   @QueryField(

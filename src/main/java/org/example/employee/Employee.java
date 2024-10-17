@@ -17,6 +17,9 @@ import java.util.Set;
 @Table(name = "employees")
 public class Employee {
 
+  public static final String PROJECTS = "projects";
+  public static final String DEPARTMENT = "department";
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

@@ -1,3 +1,4 @@
+import static org.example.employee.Employee.DEPARTMENT;
 import static org.example.query.QueryFieldConverter.convert;
 import static org.example.query.QueryFilterService.predicateFrom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -179,13 +180,14 @@ class FilterTest {
   }
 
   @Test
-  void testExpandNotApplied() {
+  void testExpandApplied() {
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
     BooleanBuilder where =
-        predicateFrom(convert(new FilterRequest()), QEmployee.employee, query, List.of());
+        predicateFrom(convert(new FilterRequest()), QEmployee.employee, query, List.of(DEPARTMENT));
 
     List<Employee> employees = query.where(where).fetch();
 
     assertFalse(Hibernate.isInitialized(employees.get(0).getProjects()));
+    assertTrue(Hibernate.isInitialized(employees.get(0).getDepartment()));
   }
 }
