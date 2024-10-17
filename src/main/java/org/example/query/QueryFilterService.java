@@ -6,52 +6,68 @@ import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleExpression;
 import com.querydsl.jpa.impl.JPAQuery;
-import java.lang.reflect.Field;
-import org.example.EmployeeFilterRequest;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Set;
+import org.example.employee.Employee;
+import org.example.employee.QEmployee;
 
 public class QueryFilterService {
 
-  public static <T> BooleanBuilder createDynamicPredicate(
-      EmployeeFilterRequest filterRequest, EntityPathBase<T> rootEntity, JPAQuery<?> query) {
+  public static <T> BooleanBuilder predicateFrom(
+      List<QueryParams> queryParams, EntityPathBase<T> rootEntity, JPAQuery<?> query) {
+
+    return predicate(queryParams, rootEntity, query);
+  }
+
+  public static <T> BooleanBuilder predicateFromRoot(
+      List<QueryParams> queryParams, EntityPathBase<T> rootEntity, JPAQueryFactory factory) {
+
+    JPAQuery<Employee> query = factory.selectFrom(QEmployee.employee);
+
+    return predicate(queryParams, rootEntity, query);
+  }
+
+  private static <T> BooleanBuilder predicate(
+      List<QueryParams> queryParams, EntityPathBase<T> rootEntity, JPAQuery<?> query) {
 
     BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-    for (Field field : filterRequest.getClass().getDeclaredFields()) {
-      field.setAccessible(true);
-      QueryField queryFieldAnnotation = field.getAnnotation(QueryField.class);
-
-      if (queryFieldAnnotation != null) {
-        try {
-          Object value = field.get(filterRequest);
-          if (value != null) {
-            String fieldName = queryFieldAnnotation.value();
-            WhereCondition[] joinPath = queryFieldAnnotation.joinPath();
-
-            booleanBuilder.and(
-                (buildPredicatesForObject(
-                    pathBuilder(query, rootEntity, joinPath), fieldName, value)));
-          }
-        } catch (IllegalAccessException e) {
-          throw new RuntimeException(e);
-        }
-      }
+    for (QueryParams queryParam : queryParams) {
+      booleanBuilder.and(
+          (buildPredicatesForObject(
+              pathBuilder(query, rootEntity, queryParam.joins()),
+              queryParam.fieldName(),
+              queryParam.value())));
     }
     return booleanBuilder;
   }
 
+  /**
+   * Returns either the join or the root path
+   *
+   * @param query
+   * @param rootEntity
+   * @param joins
+   * @return
+   * @param <T>
+   */
   private static <T> PathBuilder<?> pathBuilder(
-      JPAQuery<?> query, EntityPathBase<T> rootEntity, WhereCondition[] joinPath) {
+      JPAQuery<?> query, EntityPathBase<T> rootEntity, Set<Join> joins) {
 
     PathBuilder<?> path = new PathBuilder<>(rootEntity.getType(), rootEntity.getMetadata());
 
-    for (WhereCondition part : joinPath) {
-      PathBuilder<Object> aliasPath = new PathBuilder<>(part.value(), part.alias());
-      if (!part.collection().isBlank()) {
-        query.leftJoin(path.getSet(part.collection(), Object.class), aliasPath).fetchJoin();
+    for (Join join : joins) {
+
+      String alias = join.alias();
+
+      PathBuilder<Object> aliasPath = new PathBuilder<>(join.value(), alias);
+      if (!join.collection().isBlank()) {
+        query.leftJoin(path.getSet(join.collection(), Object.class), aliasPath).fetchJoin();
       } else {
-        query.leftJoin(path.get(part.alias(), Object.class), aliasPath).fetchJoin();
+        query.leftJoin(path.get(alias, Object.class), aliasPath).fetchJoin();
       }
-      path = new PathBuilder<>(part.value(), part.alias());
+      path = new PathBuilder<>(join.value(), alias);
     }
 
     return path;

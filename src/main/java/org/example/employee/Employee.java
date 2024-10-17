@@ -27,13 +27,10 @@ public class Employee {
 
   @ManyToMany
   @JoinTable(
-      name = "employee_project", // Name of the join table
-      joinColumns =
-          @JoinColumn(name = "employee_id"), // Column that refers to Employee in the join table
-      inverseJoinColumns =
-          @JoinColumn(name = "project_id") // Column that refers to Project in the join table
-      )
-  private Set<Project> projects;
+      name = "employee_project",
+      joinColumns = @JoinColumn(name = "employee_id"),
+      inverseJoinColumns = @JoinColumn(name = "project_id"))
+  private Set<ProjectToDo> projects;
 
   // Getters and Setters
   public Long getId() {
@@ -60,11 +57,11 @@ public class Employee {
     this.department = department;
   }
 
-  public Set<Project> getProjects() {
+  public Set<ProjectToDo> getProjects() {
     return projects;
   }
 
-  public void setProjects(Set<Project> projects) {
+  public void setProjects(Set<ProjectToDo> projects) {
     this.projects = projects;
   }
 }

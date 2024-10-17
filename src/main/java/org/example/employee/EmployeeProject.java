@@ -22,13 +22,13 @@ public class EmployeeProject {
 
   @ManyToOne
   @JoinColumn(name = "project_id", nullable = false)
-  private Project project;
+  private ProjectToDo project;
 
   // Constructors, Getters, and Setters
 
   public EmployeeProject() {}
 
-  public EmployeeProject(Employee employee, Project project) {
+  public EmployeeProject(Employee employee, ProjectToDo project) {
     this.employee = employee;
     this.project = project;
   }
@@ -49,11 +49,11 @@ public class EmployeeProject {
     this.employee = employee;
   }
 
-  public Project getProject() {
+  public ProjectToDo getProject() {
     return project;
   }
 
-  public void setProject(Project project) {
+  public void setProject(ProjectToDo project) {
     this.project = project;
   }
 }

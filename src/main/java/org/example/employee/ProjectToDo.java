@@ -1,13 +1,12 @@
 package org.example.employee;
 
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "projects")
-public class Project {
+@Table(name = "projectToDo")
+public class ProjectToDo {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +14,7 @@ public class Project {
 
   private String name;
 
-  @ManyToMany(mappedBy = "projects") // This is the reverse side of the relationship
+  @ManyToMany(mappedBy = "projects")
   private Set<Employee> employees = new HashSet<>();
 
   @ManyToOne

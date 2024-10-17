@@ -1,11 +1,11 @@
-package org.example.query;
+package org.example.query.annnotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface QueryField {
-  String value(); // Field to filter on
+  String fieldName(); // Field to filter on
 
-  WhereCondition[] joinPath() default {}; // Join path as an array
+  JOIN[] joinPath() default {}; // Join path as an array
 }

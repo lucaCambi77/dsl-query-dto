@@ -1,32 +1,32 @@
-package org.example;
+package org.example.query;
 
 import org.example.employee.Client;
 import org.example.employee.Department;
-import org.example.employee.Project;
-import org.example.query.WhereCondition;
-import org.example.query.QueryField;
+import org.example.employee.ProjectToDo;
+import org.example.query.annnotation.QueryField;
+import org.example.query.annnotation.JOIN;
 
-public class EmployeeFilterRequest {
+public class FilterRequest {
 
-  @QueryField(value = "name")
+  @QueryField(fieldName = "name")
   private String name;
 
   @QueryField(
-      value = "name",
+      fieldName = "name",
       joinPath = {
-        @WhereCondition(collection = "projects", alias = "project", value = Project.class),
-        @WhereCondition(alias = "client", value = Client.class)
+        @JOIN(collection = "projects", entityClass = ProjectToDo.class),
+        @JOIN(entityClass = Client.class)
       })
   private String clientName;
 
   @QueryField(
-      value = "name",
-      joinPath = {@WhereCondition(alias = "project", collection = "projects", value = Project.class)})
+      fieldName = "name",
+      joinPath = {@JOIN(collection = "projects", entityClass = ProjectToDo.class)})
   private String projectName;
 
   @QueryField(
-      value = "name",
-      joinPath = {@WhereCondition(alias = "department", value = Department.class)})
+      fieldName = "name",
+      joinPath = {@JOIN(entityClass = Department.class)})
   private String departmentName;
 
   public String getDepartmentName() {

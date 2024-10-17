@@ -1,3 +1,5 @@
+import static org.example.query.QueryFieldConverter.convert;
+import static org.example.query.QueryFilterService.predicateFrom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -8,12 +10,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Set;
-import org.example.EmployeeFilterRequest;
 import org.example.Main;
 import org.example.employee.*;
 import org.example.employee.Employee;
 import org.example.employee.QEmployee;
-import org.example.query.QueryFilterService;
+import org.example.query.FilterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,7 +34,8 @@ class FilterTest {
 
     // Clear tables for a fresh state before each test
     entityManager.createQuery("DELETE FROM Employee").executeUpdate();
-    entityManager.createQuery("DELETE FROM Project").executeUpdate();
+    entityManager.createQuery("DELETE FROM ProjectToDo").executeUpdate();
+    entityManager.createQuery("DELETE FROM EmployeeProject ").executeUpdate();
     entityManager.createQuery("DELETE FROM Client").executeUpdate();
     entityManager.createQuery("DELETE FROM Department").executeUpdate(); // Clear departments
 
@@ -54,7 +56,7 @@ class FilterTest {
     client2.setName("Beta Inc");
     entityManager.persist(client2);
 
-    Project project1 = new Project();
+    ProjectToDo project1 = new ProjectToDo();
     project1.setName("Project Alpha");
     project1.setClient(client1);
     entityManager.persist(project1);
@@ -65,7 +67,7 @@ class FilterTest {
     employee1.setProjects(Set.of(project1));
     entityManager.persist(employee1);
 
-    Project project2 = new Project();
+    ProjectToDo project2 = new ProjectToDo();
     project2.setName("Project Beta");
     project2.setClient(client2);
     entityManager.persist(project2);
@@ -79,12 +81,11 @@ class FilterTest {
 
   @Test
   void testBasicEqualityFilter() {
-    EmployeeFilterRequest filterRequest = new EmployeeFilterRequest();
+    FilterRequest filterRequest = new FilterRequest();
     filterRequest.setName("John Doe");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where =
-        QueryFilterService.createDynamicPredicate(filterRequest, QEmployee.employee, query);
+    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
 
     List<Employee> employees = query.where(where).fetch();
 
@@ -95,12 +96,11 @@ class FilterTest {
 
   @Test
   void testByProjectNameFilter() {
-    EmployeeFilterRequest filterRequest = new EmployeeFilterRequest();
+    FilterRequest filterRequest = new FilterRequest();
     filterRequest.setProjectName("Project Alpha");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where =
-        QueryFilterService.createDynamicPredicate(filterRequest, QEmployee.employee, query);
+    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
 
     List<Employee> employees = query.where(where).fetch();
 
@@ -111,12 +111,11 @@ class FilterTest {
 
   @Test
   void testNestedJoinFiltering() {
-    EmployeeFilterRequest filterRequest = new EmployeeFilterRequest();
+    FilterRequest filterRequest = new FilterRequest();
     filterRequest.setClientName("Acme Corp");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where =
-        QueryFilterService.createDynamicPredicate(filterRequest, QEmployee.employee, query);
+    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
 
     List<Employee> employees = query.where(where).fetch();
 
@@ -127,13 +126,12 @@ class FilterTest {
 
   @Test
   void testMultipleFiltersApplied() {
-    EmployeeFilterRequest filterRequest = new EmployeeFilterRequest();
+    FilterRequest filterRequest = new FilterRequest();
     filterRequest.setName("John Doe");
     filterRequest.setClientName("Acme Corp");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where =
-        QueryFilterService.createDynamicPredicate(filterRequest, QEmployee.employee, query);
+    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
 
     List<Employee> employees = query.where(where).fetch();
 
@@ -143,13 +141,12 @@ class FilterTest {
 
   @Test
   void testNullValuesAreIgnored() {
-    EmployeeFilterRequest filterRequest = new EmployeeFilterRequest();
-    filterRequest.setName(null); // Null field should be ignored
+    FilterRequest filterRequest = new FilterRequest();
+    filterRequest.setName(null); // Null fieldName should be ignored
     filterRequest.setClientName("Beta Inc");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where =
-        QueryFilterService.createDynamicPredicate(filterRequest, QEmployee.employee, query);
+    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
 
     List<Employee> employees = query.where(where).fetch();
 
@@ -160,12 +157,11 @@ class FilterTest {
 
   @Test
   void testDepartmentFilterApplied() {
-    EmployeeFilterRequest filterRequest = new EmployeeFilterRequest();
+    FilterRequest filterRequest = new FilterRequest();
     filterRequest.setDepartmentName("Marketing");
 
     JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
-    BooleanBuilder where =
-        QueryFilterService.createDynamicPredicate(filterRequest, QEmployee.employee, query);
+    BooleanBuilder where = predicateFrom(convert(filterRequest), QEmployee.employee, query);
 
     List<Employee> employees = query.where(where).fetch();
 
