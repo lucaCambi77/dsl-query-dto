@@ -38,6 +38,13 @@ dependencies {
 
 test {
     useJUnitPlatform()
+
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2)  // Use half of available processors
+
 }
 
 tasks.withType(JavaCompile).configureEach {
