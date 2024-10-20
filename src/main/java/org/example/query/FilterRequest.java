@@ -31,35 +31,35 @@ public class FilterRequest {
       joinPath = {@JOIN(entityClass = Department.class)})
   private String departmentName;
 
-  public String getDepartmentName() {
-    return departmentName;
-  }
-
   public void setDepartmentName(String departmentName) {
     this.departmentName = departmentName;
-  }
-
-  public String getProjectName() {
-    return projectName;
   }
 
   public void setProjectName(String projectName) {
     this.projectName = projectName;
   }
 
-  public String getName() {
-    return name;
-  }
-
   public void setName(String name) {
     this.name = name;
+  }
+
+  public void setClientName(String clientName) {
+    this.clientName = clientName;
+  }
+
+  public String getName() {
+    return name;
   }
 
   public String getClientName() {
     return clientName;
   }
 
-  public void setClientName(String clientName) {
-    this.clientName = clientName;
+  public String getProjectName() {
+    return projectName;
+  }
+
+  public String getDepartmentName() {
+    return departmentName;
   }
 }
