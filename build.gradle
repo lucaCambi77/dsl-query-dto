@@ -21,7 +21,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
+    implementation platform('io.github.openfeign.querydsl:querydsl-bom:latest.release')
+
+    implementation 'io.github.openfeign.querydsl:querydsl-core'
+    implementation 'io.github.openfeign.querydsl:querydsl-jpa'
+    implementation 'io.github.openfeign.querydsl:querydsl-apt'
+
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"

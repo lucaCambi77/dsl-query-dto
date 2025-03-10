@@ -1,5 +1,7 @@
 package org.example.query;
 
-import java.util.Set;
+import java.util.List;
 
-public record QueryFilter(String fieldName, Set<Join> joins, Object value) {}
+public record QueryFilter(String fieldName, List<Join> joins, Object value) {
+
+}

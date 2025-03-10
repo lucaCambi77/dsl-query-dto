@@ -5,7 +5,18 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface QueryField {
-  String fieldName(); // Field to filter on
+    /**
+     * Database field to filter on
+     */
+    String name() default "";
 
-  JOIN[] joinPath() default {}; // Join path as an array
+    /**
+     * Join path as an array
+     */
+    JOIN[] joinPath() default {};
+
+    /**
+     * Whether it is a prefix for a nested field
+     */
+    boolean isPrefix() default false;
 }
