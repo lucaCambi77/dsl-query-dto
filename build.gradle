@@ -52,6 +52,3 @@ test {
 
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.annotationProcessorPath = configurations.annotationProcessor
-}

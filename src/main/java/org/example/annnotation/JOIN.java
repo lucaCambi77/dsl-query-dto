@@ -1,4 +1,4 @@
-package org.example.query.annnotation;
+package org.example.annnotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

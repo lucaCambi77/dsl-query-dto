@@ -1,3 +1,4 @@
+package org.example.employee;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -10,12 +11,13 @@ import org.example.model.Department;
 import org.example.model.Employee;
 import org.example.model.ProjectToDo;
 import org.example.model.QEmployee;
-import org.example.query.service.QueryFilterService;
 import org.example.query.QueryParams;
+import org.example.query.service.QueryFilterService;
 import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = Main.class)
 @Transactional
-class FilterTest {
+class EmployeeFilterTest {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -37,6 +39,7 @@ class FilterTest {
     private JPAQueryFactory queryFactory;
 
     @Autowired
+    @Qualifier("employeeFilterService")
     private QueryFilterService queryFilterService;
 
     @BeforeEach
@@ -92,12 +95,12 @@ class FilterTest {
 
     @Test
     void testBasicEqualityFilter() {
-        FilterRequestTest filterRequestTest = new FilterRequestTest();
-        filterRequestTest.setName(List.of("John Doe"));
+        TestFilter testFilter = new TestFilter();
+        testFilter.setName(List.of("John Doe"));
 
         JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
         Predicate where =
-                queryFilterService.predicateFrom(QueryParams.from(filterRequestTest, null, null).queryFilter(), QEmployee.employee, query, List.of());
+                queryFilterService.predicateFrom(QueryParams.from(testFilter, null, null).queryFilter(), QEmployee.employee, query, List.of());
 
         List<Employee> employees = query.where(where).fetch();
 
@@ -108,12 +111,12 @@ class FilterTest {
 
     @Test
     void testByProjectNameFilter() {
-        FilterRequestTest filterRequestTest = new FilterRequestTest();
-        filterRequestTest.setProjectName(List.of("Project Alpha"));
+        TestFilter testFilter = new TestFilter();
+        testFilter.setProjectName(List.of("Project Alpha"));
 
         JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
         Predicate where =
-                queryFilterService.predicateFrom(QueryParams.from(filterRequestTest, null, null).queryFilter(), QEmployee.employee, query, List.of());
+                queryFilterService.predicateFrom(QueryParams.from(testFilter, null, null).queryFilter(), QEmployee.employee, query, List.of());
 
         List<Employee> employees = query.where(where).fetch();
 
@@ -124,12 +127,12 @@ class FilterTest {
 
     @Test
     void testNestedJoinFiltering() {
-        FilterRequestTest filterRequestTest = new FilterRequestTest();
-        filterRequestTest.setClientName(List.of("Acme Corp"));
+        TestFilter testFilter = new TestFilter();
+        testFilter.setClientName(List.of("Acme Corp"));
 
         JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
         Predicate where =
-                queryFilterService.predicateFrom(QueryParams.from(filterRequestTest, null, null).queryFilter(), QEmployee.employee, query, List.of());
+                queryFilterService.predicateFrom(QueryParams.from(testFilter, null, null).queryFilter(), QEmployee.employee, query, List.of());
 
         List<Employee> employees = query.where(where).fetch();
 
@@ -140,13 +143,13 @@ class FilterTest {
 
     @Test
     void testMultipleFiltersApplied() {
-        FilterRequestTest filterRequestTest = new FilterRequestTest();
-        filterRequestTest.setName(List.of("John Doe"));
-        filterRequestTest.setClientName(List.of("Acme Corp"));
+        TestFilter testFilter = new TestFilter();
+        testFilter.setName(List.of("John Doe"));
+        testFilter.setClientName(List.of("Acme Corp"));
 
         JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
         Predicate where =
-                queryFilterService.predicateFrom(QueryParams.from(filterRequestTest, null, null).queryFilter(), QEmployee.employee, query, List.of());
+                queryFilterService.predicateFrom(QueryParams.from(testFilter, null, null).queryFilter(), QEmployee.employee, query, List.of());
 
         List<Employee> employees = query.where(where).fetch();
 
@@ -156,13 +159,13 @@ class FilterTest {
 
     @Test
     void testNullValuesAreIgnored() {
-        FilterRequestTest filterRequestTest = new FilterRequestTest();
-        filterRequestTest.setName(null); // Null fieldName should be ignored
-        filterRequestTest.setClientName(List.of("Beta Inc"));
+        TestFilter testFilter = new TestFilter();
+        testFilter.setName(null); // Null fieldName should be ignored
+        testFilter.setClientName(List.of("Beta Inc"));
 
         JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
         Predicate where =
-                queryFilterService.predicateFrom(QueryParams.from(filterRequestTest, null, null).queryFilter(), QEmployee.employee, query, List.of());
+                queryFilterService.predicateFrom(QueryParams.from(testFilter, null, null).queryFilter(), QEmployee.employee, query, List.of());
 
         List<Employee> employees = query.where(where).fetch();
 
@@ -173,12 +176,12 @@ class FilterTest {
 
     @Test
     void testDepartmentFilterApplied() {
-        FilterRequestTest filterRequestTest = new FilterRequestTest();
-        filterRequestTest.setDepartmentName(List.of("Marketing"));
+        TestFilter testFilter = new TestFilter();
+        testFilter.setDepartmentName(List.of("Marketing"));
 
         JPAQuery<Employee> query = queryFactory.selectFrom(QEmployee.employee);
         Predicate where =
-                queryFilterService.predicateFrom(QueryParams.from(filterRequestTest, null, null).queryFilter(), QEmployee.employee, query, List.of());
+                queryFilterService.predicateFrom(QueryParams.from(testFilter, null, null).queryFilter(), QEmployee.employee, query, List.of());
 
         List<Employee> employees = query.where(where).fetch();
 

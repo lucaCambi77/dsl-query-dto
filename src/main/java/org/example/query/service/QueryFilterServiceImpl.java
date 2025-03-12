@@ -13,7 +13,7 @@ import static org.example.model.Employee.CLIENT;
 import static org.example.model.Employee.DEPARTMENT;
 import static org.example.model.Employee.PROJECTS;
 
-@Service
+@Service("employeeFilterService")
 public class QueryFilterServiceImpl implements QueryFilterService {
 
     Map<String, Class<?>> entities = Map.of(PROJECTS, ProjectToDo.class, CLIENT, Client.class, DEPARTMENT, Department.class);

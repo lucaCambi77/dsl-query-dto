@@ -1,6 +1,8 @@
-import org.example.query.annnotation.FilterRequest;
-import org.example.query.annnotation.JOIN;
-import org.example.query.annnotation.QueryField;
+package org.example.employee;
+
+import org.example.annnotation.FilterRequest;
+import org.example.annnotation.JOIN;
+import org.example.annnotation.QueryField;
 
 import java.util.List;
 
@@ -8,7 +10,7 @@ import static org.example.model.Employee.CLIENT;
 import static org.example.model.Employee.DEPARTMENT;
 import static org.example.model.Employee.PROJECTS;
 
-public class FilterRequestTest implements FilterRequest {
+public class TestFilter implements FilterRequest {
 
     private List<String> name;
 

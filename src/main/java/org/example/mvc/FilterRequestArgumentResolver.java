@@ -1,4 +1,4 @@
-package org.example.query.mvc;
+package org.example.mvc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.lang.reflect.Field;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.example.query.annnotation.FilterRequest;
+import org.example.annnotation.FilterRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestController;

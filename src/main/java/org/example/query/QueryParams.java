@@ -1,7 +1,7 @@
 package org.example.query;
 
-import org.example.query.annnotation.JOIN;
-import org.example.query.annnotation.QueryField;
+import org.example.annnotation.JOIN;
+import org.example.annnotation.QueryField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
